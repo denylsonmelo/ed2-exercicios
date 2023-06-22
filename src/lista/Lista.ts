@@ -4,7 +4,9 @@ export class Lista {
 	private totalNos: number = 0;
 	private head: No = null;
 
-	constructor(valor?) {}
+	constructor(valor?) {
+		console.log("> iniciando lista nova");
+	}
 
 	public adicionarHead(valor: any) {
 		let novoNo = new No(valor, this.head);

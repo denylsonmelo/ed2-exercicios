@@ -6,9 +6,10 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "tsc -p .",
-		"watch": "npm run build -- -w",
 		"exec": "node build/index.js",
-		"test": "jest"
+		"test": "jest",
+		"watch": "npm run build -- -w",
+		"watcht": "jest --watch"
 	},
 	"devDependencies": {
 		"@types/jest": "^29.5.2",
