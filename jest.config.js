@@ -4,5 +4,5 @@ module.exports = {
 	testEnvironment: "node",
 	testPathIgnorePatterns: ["build"],
 	collectCoverage: true,
-	collectCoverageFrom: ["./src/**"],
+	collectCoverageFrom: ["./src/**", "!./src/index.ts"],
 };
