@@ -6,7 +6,7 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "tsc -p .",
-		"exec": "node build/index.js",
+		"exec": "node build/src/index.js",
 		"test": "jest",
 		"watch": "npm run build -- -w",
 		"watcht": "jest --watch"

@@ -1,124 +1,196 @@
 import { No } from "./No";
 
 export class Lista {
-	private totalNos: number = 0;
-	private head: No = null;
+	private _totalNos: number = 0;
+	private _head: No = null;
+	private _tail: No = null;
 
 	constructor(valor?) {
-		console.log("> iniciando lista nova");
+		if (valor) {
+			this.adicionarHead(valor);
+		}
 	}
 
 	public adicionarHead(valor: any) {
-		let novoNo = new No(valor, this.head);
+		let novoNo = new No(valor, this._head);
+		this._head = novoNo;
 
-		//let noTemporario = this.head;
-		this.head = novoNo;
-		//novoNo.proximo = noTemporario;
+		if (this.estarVazia) this._tail = this.head;
+		else this._head.proximo.anterior = this.head;
 
-		this.totalNos++;
+		this._totalNos++;
+	}
+
+	public adicionarTail(valor: any) {
+		let novoNo = new No(valor, null, this._tail);
+
+		if (this.estarVazia) this._head = novoNo;
+		else this._tail.proximo = novoNo;
+
+		this._tail = novoNo;
+		this._totalNos++;
 	}
 
 	public adicionarEm(valor, indice: number) {
-		if (this.estarVazia()) {
-			console.log("> lista vazia");
+		if (indice <= 0) {
+			this.adicionarHead(valor);
 			return;
 		}
 
-		if (indice < 0 || indice > this.tamanho()) {
-			console.log("> indice fora do tamanho da lista");
+		if (indice >= this.tamanho) {
+			this.adicionarTail(valor);
 			return;
 		}
 
-		let elementoIteracao = this.head;
-		for (let index = 0; index < indice; index++) {
-			console.log(`> procurando valor em: ${index}`);
+		let noIndex: No = this._pertoInicio(indice)
+			? this._percorrerInicio(indice)
+			: this._percorrerFim(indice);
 
-			if (index == indice - 1) {
-				console.log(
-					`index: ${index}, elemento: ${elementoIteracao.valor}`
-				);
+		let novoNo = new No(valor);
+		noIndex.anterior.proximo = novoNo;
+		novoNo.proximo = noIndex;
+		novoNo.anterior = noIndex.anterior;
+		noIndex.anterior = novoNo;
+	}
 
-				let novoNo = new No(valor, elementoIteracao.proximo);
-				elementoIteracao.proximo = novoNo;
-			}
+	public buscar(valor: any): any {
+		if (this.estarVazia) return null;
 
-			if (elementoIteracao.proximo == null) break;
-
+		let elementoIteracao = this._head;
+		for (let index = 0; index < this.tamanho; index++) {
+			if (elementoIteracao.valor == valor) return elementoIteracao.valor;
 			elementoIteracao = elementoIteracao.proximo;
 		}
+		return null;
+	}
+
+	public buscarFim(valor: any): any {
+		if (this.estarVazia) return null;
+
+		let elementoIteracao = this._tail;
+		for (let index = 0; index < this.tamanho; index++) {
+			if (elementoIteracao.valor == valor) return elementoIteracao.valor;
+			elementoIteracao = elementoIteracao.anterior;
+		}
+		return null;
 	}
 
 	public removerHead() {
-		if (this.estarVazia()) {
-			console.log("> lista vazia");
-			return;
-		}
+		if (this.estarVazia) return;
 
-		console.log(`> removendo elemento --> ${this.head}`);
+		this._head = this._head.proximo;
+		this._totalNos--;
 
-		let noTemporario = this.head.proximo;
-		this.head = noTemporario;
-		this.totalNos--;
+		if (this.estarVazia) this._tail = null;
+		else this._head.anterior = null;
 	}
 
-	public valores(): void {
-		if (this.estarVazia()) {
-			console.log("> lista vazia");
+	public removerTail() {
+		if (this.tamanho == 1) {
+			this._head = null;
+			this._tail = null;
+		} else {
+			this._tail.anterior.proximo = null;
+			this._tail = this._tail.anterior;
+		}
+		this._totalNos--;
+	}
+
+	public removerEm(indice: number) {
+		if (indice <= 0) {
+			this.removerHead();
 			return;
 		}
 
-		let elementoIteracao = this.head;
-		for (let index = 0; ; index++) {
-			console.log(`index: ${index}, elemento: ${elementoIteracao.valor}`);
+		if (indice >= this.tamanho) {
+			this.removerTail();
+			return;
+		}
 
-			if (elementoIteracao.proximo == null) break;
+		let noIndex: No = this._pertoInicio(indice)
+			? this._percorrerInicio(indice)
+			: this._percorrerFim(indice);
 
+		noIndex.anterior.proximo = noIndex.proximo;
+		noIndex.proximo.anterior = noIndex.anterior;
+
+		this._totalNos--;
+	}
+
+	public valores(): Array<any> {
+		if (this.estarVazia) return [];
+
+		let dados: Array<any> = new Array();
+		let elementoIteracao = this._head;
+		for (let index = 0; index < this.tamanho; index++) {
+			dados[index] = elementoIteracao.valor;
 			elementoIteracao = elementoIteracao.proximo;
 		}
+		return dados;
 	}
 
-	public valorEm(indice: number): void {
-		//console.log(`> iniciando procura de valores`);
+	public valoresFim(): Array<any> {
+		if (this.estarVazia) return [];
 
-		if (this.estarVazia()) {
-			console.log("> lista vazia");
-			return;
+		let dados: Array<any> = new Array();
+		let elementoIteracao = this._tail;
+		for (let index = 0; index < this.tamanho; index++) {
+			dados[index] = elementoIteracao.valor;
+			elementoIteracao = elementoIteracao.anterior;
 		}
+		return dados;
+	}
 
-		if (indice < 0 || indice > this.tamanho()) {
-			console.log("> indice fora do tamanho da lista");
-			return;
-		}
+	public valorEm(indice: number): any {
+		if (this.estarVazia) return null;
 
-		let elementoIteracao = this.head;
+		if (this._indiceValido(indice)) return null;
+
+		let no: No = this._pertoInicio(indice)
+			? this._percorrerInicio(indice)
+			: this._percorrerFim(indice);
+		return no.valor;
+	}
+
+	public get head(): any {
+		if (this._head) return this._head.valor;
+		return null;
+	}
+
+	public get tail(): any {
+		if (this._tail) return this._tail.valor;
+		return null;
+	}
+
+	public get tamanho(): number {
+		return this._totalNos;
+	}
+
+	public get estarVazia(): boolean {
+		return this.tamanho == 0;
+	}
+
+	private _percorrerInicio(indice: number): No {
+		let elementoIteracao = this._head;
 		for (let index = 0; index <= indice; index++) {
-			console.log(`> procurando valor em: ${index}`);
-
-			if (index == indice)
-				console.log(
-					`index: ${index}, elemento: ${elementoIteracao.valor}`
-				);
-
-			if (elementoIteracao.proximo == null) break;
-
 			elementoIteracao = elementoIteracao.proximo;
 		}
-		//console.log(`> terminando procura de valores`);
+		return elementoIteracao;
 	}
 
-	public tamanho(): number {
-		return this.totalNos;
+	private _percorrerFim(indice: number): No {
+		let elementoIteracao = this._tail;
+		for (let index = 0; index <= indice; index++) {
+			elementoIteracao = elementoIteracao.anterior;
+		}
+		return elementoIteracao;
 	}
 
-	public estarVazia(): boolean {
-		return this.tamanho() == 0;
-		//return false;
+	private _indiceValido(valor: number): boolean {
+		return valor < 0 || valor >= this.tamanho;
 	}
 
-	public info() {
-		console.log("> lista vazia:", this.estarVazia());
-		console.log("> tamanho:", this.tamanho());
-		// console.log("> cabeca:", this.head);
-		// console.log("> proximo elemento:", this.head.proximo);
+	private _pertoInicio(valor: number): boolean {
+		return valor <= this.tamanho / 2;
 	}
 }
