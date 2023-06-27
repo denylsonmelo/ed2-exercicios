@@ -67,4 +67,20 @@ describe("Nó de Lista", () => {
 		expect(no1.valor).toBe(valor);
 		expect(no1.anterior).toBe(no2);
 	});
+
+	test("ao comparar um valor recebido, deve retornar true se for igual ao armazenado ", () => {
+		let valor = "valor";
+		let no1 = new No(valor);
+
+		expect(no1.valor).toBe(valor);
+		expect(no1.igual(valor)).toBeTruthy();
+	});
+
+	test("ao comparar um valor recebido, deve retornar false se for diferente ao armazenado ", () => {
+		let valor = "valor";
+		let no1 = new No(valor);
+
+		expect(no1.valor).toBe(valor);
+		expect(no1.igual(valor + " ")).toBeFalsy();
+	});
 });

@@ -14,6 +14,10 @@ export class No {
 		}
 	}
 
+	public igual(outroValor: any) {
+		return this._valor === outroValor;
+	}
+
 	public get valor(): any {
 		return this._valor;
 	}
