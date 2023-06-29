@@ -5,18 +5,16 @@ export class Lista {
 	private _head: No = null;
 	private _tail: No = null;
 
-	constructor(valor?) {
-		if (valor) {
-			this.adicionarHead(valor);
-		}
+	constructor(...dados: Array<any>) {
+		dados.forEach((item, index) => this.adicionarEm(item, index));
 	}
 
 	public adicionarHead(valor: any) {
 		let novoNo = new No(valor, this._head);
 		this._head = novoNo;
 
-		if (this.estarVazia) this._tail = this.head;
-		else this._head.proximo.anterior = this.head;
+		if (this.estarVazia) this._tail = this._head;
+		else this._head.proximo.anterior = this._head;
 
 		this._totalNos++;
 	}
@@ -51,6 +49,7 @@ export class Lista {
 		novoNo.proximo = noIndex;
 		novoNo.anterior = noIndex.anterior;
 		noIndex.anterior = novoNo;
+		this._totalNos++;
 	}
 
 	public buscar(valor: any): any {
@@ -58,7 +57,7 @@ export class Lista {
 
 		let elementoIteracao = this._head;
 		for (let index = 0; index < this.tamanho; index++) {
-			if (elementoIteracao.valor == valor) return elementoIteracao.valor;
+			if (elementoIteracao.igual(valor)) return elementoIteracao.valor;
 			elementoIteracao = elementoIteracao.proximo;
 		}
 		return null;
@@ -69,7 +68,7 @@ export class Lista {
 
 		let elementoIteracao = this._tail;
 		for (let index = 0; index < this.tamanho; index++) {
-			if (elementoIteracao.valor == valor) return elementoIteracao.valor;
+			if (elementoIteracao.igual(valor)) return elementoIteracao.valor;
 			elementoIteracao = elementoIteracao.anterior;
 		}
 		return null;
@@ -172,15 +171,16 @@ export class Lista {
 
 	private _percorrerInicio(indice: number): No {
 		let elementoIteracao = this._head;
-		for (let index = 0; index <= indice; index++) {
+		for (let index = 0; index < indice; index++) {
 			elementoIteracao = elementoIteracao.proximo;
 		}
 		return elementoIteracao;
 	}
 
+	// 0 1 2 3 4 5 6 7 8 9
 	private _percorrerFim(indice: number): No {
 		let elementoIteracao = this._tail;
-		for (let index = 0; index <= indice; index++) {
+		for (let index = this.tamanho - 1; index > indice; index--) {
 			elementoIteracao = elementoIteracao.anterior;
 		}
 		return elementoIteracao;
