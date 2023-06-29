@@ -80,11 +80,16 @@ export class Lista {
 		this._head = this._head.proximo;
 		this._totalNos--;
 
-		if (this.estarVazia) this._tail = null;
-		else this._head.anterior = null;
+		if (this.estarVazia) {
+			this._tail = null;
+		} else {
+			this._head.anterior = null;
+		}
 	}
 
 	public removerTail() {
+		if (this.estarVazia) return;
+
 		if (this.tamanho == 1) {
 			this._head = null;
 			this._tail = null;
@@ -177,7 +182,7 @@ export class Lista {
 		return elementoIteracao;
 	}
 
-	// 0 1 2 3 4 5 6 7 8 9
+	// TODO: remover erro
 	private _percorrerFim(indice: number): No {
 		let elementoIteracao = this._tail;
 		for (let index = this.tamanho - 1; index > indice; index--) {
